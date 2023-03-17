@@ -9,6 +9,7 @@ from streamlit_folium import folium_static
 from geopy.distance import geodesic
 import branca
 import branca.colormap as cm
+import numpy as np
 
 data = pd.read_csv('https://raw.githubusercontent.com/sandroormeno/app_for_running/main/data/GPS-3-15-2023.CSV') # GPS.CSV
 
@@ -45,10 +46,19 @@ y lo estoy graficando en un mapa personalizado gracias a Folium.
 Si bien El dispositivo puede proporcionarnos la velocidad y la distancia recorrida, 
 he decidido recalcularlos y mostrarlos a manera de datos acumulativos en cada marca graficada en el mapa. 
 Además, indico la velocidad en cada tramo del recorrido. 
-Espero hacer más análisis con los datos recopilados y con los que pueda generar.
+
+Pare representar la velocidad estor usando un mapeo de color como se muestra a continuación:
+
 '''
 #st.markdown('Streamlit is **_really_ cool**.')
 st.markdown(text)
+color = cm.LinearColormap(['red','yellow', 'green'],
+                        vmin=1, vmax=2.8,
+                        index=[0, 2.0, 2.8])
+                        
+st.write(color)
+
+
 
 def show_maps(view, samples):
     down = dicts[view][0]
@@ -62,6 +72,7 @@ def show_maps(view, samples):
     s = 0
     t = 0
     tim = 0
+    list_speed =[]
     color = cm.LinearColormap(['red','yellow', 'green'],
                             vmin=1, vmax=2.8,
                             index=[0, 2.0, 2.8])
@@ -74,6 +85,7 @@ def show_maps(view, samples):
               s = s + float("{:.1f}".format(geodesic(origin, dist).meters))
               s = float("{:.1f}".format(s))
               speed = float("{:.1f}".format(geodesic(origin, dist).meters/30))
+              list_speed.append(speed)
             else:
               s = 0
               speed = 0
@@ -84,17 +96,17 @@ def show_maps(view, samples):
             if (t <= 60):
                 tim = str(t) + " seg"
             else:
-                tim = str(float("{:.1f}".format(t/60))) + " min"
+                tim = str(float("{:.1f}".format(t/60))) + " minutos"
             lat_previo = data.iloc[i]['Lat']
             long_previo = data.iloc[i]['Long']
             if(i == samples[0]):
-                iframe = folium.IFrame("<img src='https://raw.githubusercontent.com/sandroormeno/EnglishWeb/main/static/images/ini.jpg'> <i><br>Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Speed: "+ str(speed)+" mts/seg</i>")
+                iframe = folium.IFrame("<img src='https://raw.githubusercontent.com/sandroormeno/EnglishWeb/main/static/images/ini.jpg'> <i><br>Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Velocidad: "+ str(speed)+" mts/seg</i>")
                 iframe_ = branca.element.IFrame(html=iframe, width=340, height=210)
             elif(i == mid):
-                iframe = folium.IFrame("<img src='https://raw.githubusercontent.com/sandroormeno/EnglishWeb/main/static/images/fin.jpg'> <i><br>Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Speed: "+ str(speed)+" mts/seg</i>")
+                iframe = folium.IFrame("<img src='https://raw.githubusercontent.com/sandroormeno/EnglishWeb/main/static/images/fin.jpg'> <i><br>Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Velocidad: "+ str(speed)+" mts/seg</i>")
                 iframe_ = branca.element.IFrame(html=iframe, width=340, height=210)
             else:
-                iframe = folium.IFrame("Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Speed: "+ str(speed)+" mts/seg mts<br>Altitude: "+ str(data.iloc[i]['Altitude'])  +" mts</i>")
+                iframe = folium.IFrame("Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Velocidad: "+ str(speed)+" mts/seg<br>Altitud: "+ str(data.iloc[i]['Altitude'])  +" mts</i>")
                 iframe_ = branca.element.IFrame(html=iframe, width=200, height=130)
             #popup = folium.Popup(iframe, min_width=180, max_width=250, height=500)
             
@@ -121,6 +133,7 @@ def show_maps(view, samples):
               s = s + float("{:.1f}".format(geodesic(origin, dist).meters))
               s = float("{:.1f}".format(s))
               speed = float("{:.1f}".format(geodesic(origin, dist).meters/30))
+              list_speed.append(speed)
             else:
               s = 0
               speed = 0
@@ -132,7 +145,7 @@ def show_maps(view, samples):
             if (t <= 60):
                 tim = str(t) + " seg"
             else:
-                tim = str(float("{:.1f}".format(t/60))) + " min"
+                tim = str(float("{:.1f}".format(t/60))) + " minutos"
                 
             lat_previo = data.iloc[i]['Lat']
             long_previo = data.iloc[i]['Long']
@@ -141,12 +154,12 @@ def show_maps(view, samples):
             #iframe = folium.IFrame("<img src='https://raw.githubusercontent.com/sandroormeno/EnglishWeb/main/static/images/ini.jpg' width='100' height='100'> <i><br>Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Speed: "+ str(speed)+" mts/seg</i>")
             #popup = folium.Popup(iframe, min_width=180, max_width=250)
             if(i == mid):
-                iframe = folium.IFrame("<img src='https://raw.githubusercontent.com/sandroormeno/EnglishWeb/main/static/images/fin.jpg'> <i><br>Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Speed: "+ str(speed)+" mts/seg<br>Altitude: "+ str(data.iloc[i]['Altitude'])  +" mts</i>")
+                iframe = folium.IFrame("<img src='https://raw.githubusercontent.com/sandroormeno/EnglishWeb/main/static/images/fin.jpg'> <i><br>Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Velocidad: "+ str(speed)+" mts/seg<br>Altitud: "+ str(data.iloc[i]['Altitude'])  +" mts</i>")
                 #iframe = folium.IFrame("Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Speed: "+ str(speed)+" mts/seg mts<br>Altitude: "+ str(data.iloc[i]['Altitude'])  +" mts</i>")
                 iframe_ = branca.element.IFrame(html=iframe, width=340, height=210)
             else:
                 #iframe = folium.IFrame("Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Speed: "+ str(speed)+" mts/seg</i>")
-                iframe = folium.IFrame("Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Speed: "+ str(speed)+" mts/seg mts<br>Altitude: "+ str(data.iloc[i]['Altitude'])  +" mts</i>")
+                iframe = folium.IFrame("Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Velocidad: "+ str(speed)+" mts/seg<br>Altitud: "+ str(data.iloc[i]['Altitude'])  +" mts</i>")
                 iframe_ = branca.element.IFrame(html=iframe, width=200, height=130)
             popup = folium.Popup(iframe_,  max_width=210)
             index = "<i>Sample: " + str(i) + "</i>"
@@ -160,7 +173,12 @@ def show_maps(view, samples):
             destino =[data.iloc[i-10]['Lat'], data.iloc[i-10]['Long']]
             speed_text = "<i>Speed: " + str(speed) + " mts/seg</i>"
             folium.PolyLine([origin,destino], color=color(speed), weight=speed*3, opacity=1, dash_array="5, 10", tooltip=speed_text).add_to(map_sby)
-
+    
+    st.write("Total de distancia  recorrida:  __" + str(s) + " mts__")
+    st.write("Total de tiempo usado en el recorrido:  __" + str(tim) + "__")
+    speed_average = float("{:.2f}".format(sum(list_speed)/len(list_speed)))
+    st.write("Velocidad promedio del recorrido:  __" + str(speed_average) + " mts/seg__")
+    st.markdown("Espero hacer más análisis con los datos recopilados y con los que pueda generar.")
     folium_static(map_sby)
 
 
