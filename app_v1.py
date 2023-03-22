@@ -5,6 +5,7 @@ import pandas as pd # library for data analsysis
 #import numpy as np
 import folium # map rendering library
 import streamlit as st
+from folium.plugins import Draw
 from streamlit_folium import folium_static
 from geopy.distance import geodesic
 import branca
@@ -94,17 +95,22 @@ mid_= 380
 
 #st.text('https://raw.githubusercontent.com/sandroormeno/app_for_running/main'+str(df.iloc[0]['path']))
 
-correr_group = folium.FeatureGroup(name="View Path", show=True)
+correr_group = folium.FeatureGroup(name="View path + images", show=True)
 feature_group = folium.FeatureGroup(name="View images", show=False)
 img_group = folium.FeatureGroup(name="View images better", show=False)
+view_path = folium.FeatureGroup(name="View only path", show=False)
 
 #down_ = dicts_view[view_images][0]
 #up_ = dicts_view[view_images][1]
 
-#list_of_images = []
-#for i in range(range_img[0]-1,range_img[1]):
-#    image =f"https://raw.githubusercontent.com/sandroormeno/app_for_running/main{df.iloc[i]['path']}"
-#   list_of_images.append(image)
+list_of_images = []
+pos =[]
+for i in range(len(df)):
+   image =f"https://raw.githubusercontent.com/sandroormeno/app_for_running/main{df.iloc[i]['path']}"
+   lat = df.iloc[i]['Lat']
+   lon = df.iloc[i]['Long']
+   pos.append((lat,lon))
+   list_of_images.append(image)
 #for i in range(len(df)):
 #st.write('Cantidad de images:', len(list_of_images)) 
 #st.write('Images:', list_of_images) 
@@ -195,20 +201,57 @@ Estoy usando un **GPS** (GPS-EM-406A) para recopilar datos de posición
 y lo estoy graficando en un mapa personalizado gracias a Folium. 
 Si bien El dispositivo puede proporcionarnos la velocidad y la distancia recorrida, 
 he decidido recalcularlos y mostrarlos a manera de datos acumulativos en cada marca graficada en el mapa. 
-Además, indico la velocidad en cada tramo del recorrido. 
-
-Pare representar la velocidad estoy usando un mapeo de color como se muestra a continuación:
+Además, indico la velocidad en cada tramo del recorrido, el cual se puede visualizar en el apartado `View only path`.
 
 '''
 #st.markdown('Streamlit is **_really_ cool**.')
 st.markdown(text)
+
+st.markdown("![Alt Text](https://raw.githubusercontent.com/sandroormeno/app_for_running/main/images/path.PNG)")
+
+text = "Para representar la velocidad estoy usando un mapeo de color como se muestra a continuación:"
+st.markdown(text)
 color = cm.LinearColormap(['red','yellow', 'green'],
                         vmin=1, vmax=2.8,
-                        index=[0, 2.0, 2.8])
-                        
+                        index=[0, 2.0, 2.8])                     
 st.write(color)
 
+text = '''
+Esto quiere decir que estoy usando :red[rojo] para bajas velocidades (1 mts/seg) y :green[verde] para altas velocidades (2.8mts/seg). 
+Además, también se representa en el espesor del trazo.
 
+'''
+
+
+st.markdown(text)
+
+indice = st.slider('Imagen a ver: ', 11, 774, 567)
+
+
+#m = folium.Map(location=[-12.1070348,-76.9468047], zoom_start=10)
+
+#m.fit_bounds([[-12.085559732437236, -76.95951832322937], [-12.116557310906174, -76.93135291029945]])
+#Draw(export=True).add_to(m)
+# tutorial
+from streamlit_folium import st_folium
+
+m = folium.Map(pos[indice], zoom_start=16)
+index = "<i>Indice: " + str(indice) + "</i>"
+folium.Marker(pos[indice],tooltip=index ).add_to(m)
+#Draw(export=True).add_to(m)
+
+c1, c2 = st.columns(2)
+with c1:
+    #output = st_folium(m, width=700, height=500)
+    st_folium(m, width=500, height=400)
+
+with c2:
+    #st.write(output)
+    st.markdown(f"![Alt Text]({str(list_of_images[indice])})")
+    
+    
+
+    
 
 def show_maps(view, samples):
     down = dicts[view][0]
@@ -221,6 +264,9 @@ def show_maps(view, samples):
     
     lat_previo = 0
     long_previo = 0
+    lat_previo_ = 0
+    long_previo_ = 0
+    s_ = 0
     s = 0
     t = 0
     tim = 0
@@ -285,7 +331,7 @@ def show_maps(view, samples):
                 origin = [data.iloc[i]['Lat'], data.iloc[i]['Long']]
                 destino =[data.iloc[i-10]['Lat'], data.iloc[i-10]['Long']]
                 speed_text = "<i>Speed: " + str(speed) + " mts/seg</i>"
-                folium.PolyLine([origin,destino], color=color(speed), weight=speed*3, opacity=1, dash_array="5, 10", tooltip=speed_text).add_to(correr_group)
+                #folium.PolyLine([origin,destino], color=color(speed), weight=speed*3, opacity=1, dash_array="5, 10", tooltip=speed_text).add_to(view_path)
             elif(i > mid and up == 1):
                 if (lat_previo != 0):
                     origin = (lat_previo, long_previo)
@@ -320,7 +366,7 @@ def show_maps(view, samples):
                 #    iframe_ = branca.element.IFrame(html=iframe, width=200, height=130)   
                 #popup = folium.Popup(iframe_, lolo = df_img.iloc[-1]['path']
                 image=f"https://raw.githubusercontent.com/sandroormeno/app_for_running/main{df_img.iloc[num]['path']}"
-                html = f"<img src={str(image)} width='400' height='400'><br><i>Tiempo : {str(tim)}<br>Distacia: {str(s)} mts<br>Velocidad: {str(speed)} mts/seg<br>&copy 2023 Sandro Ormeño</i>"
+                html = f"<img src={str(image)} width='400' height='400'><br><i>Tiempo : {str(tim)}<br>Distacia: {str(s)} mts<br>Velocidad: {str(speed)} mts/seg<br>&copy 2023 Sandro Ormeño</i>" #<h6>Heading level 6</h6>
                 iframe = branca.element.IFrame(html=html, width=400+20, height=400+90)
                 popup = folium.Popup(iframe, max_width=2650)
                 index = "<i>Sample: " + str(i) + "</i>"
@@ -333,9 +379,48 @@ def show_maps(view, samples):
                 origin = [data.iloc[i]['Lat'], data.iloc[i]['Long']]
                 destino =[data.iloc[i-10]['Lat'], data.iloc[i-10]['Long']]
                 speed_text = "<i>Speed: " + str(speed) + " mts/seg</i>"
-                folium.PolyLine([origin,destino], color=color(speed), weight=speed*3, opacity=1, dash_array="5, 10", tooltip=speed_text).add_to(correr_group)
-            num = num +1  
+                #folium.PolyLine([origin,destino], color=color(speed), weight=speed*3, opacity=1, dash_array="5, 10", tooltip=speed_text).add_to(view_path)
+                #folium.PolyLine([origin,destino], color=color(speed), weight=speed*3, opacity=1, tooltip=speed_text).add_to(view_path)
+            num = num +1 
+        if (i % 2 == 0):
+            if (i <= mid and down == 1):
+                if (lat_previo_ != 0):
+                    origin = (lat_previo_, long_previo_)
+                    dist = (data.iloc[i]['Lat'], data.iloc[i]['Long'])
+                    s_ = s_ + float("{:.1f}".format(geodesic(origin, dist).meters))
+                    s_ = float("{:.1f}".format(s_))
+                    speed = float("{:.1f}".format(geodesic(origin, dist).meters/6))
+                    #list_speed.append(speed)
+                else:
+                    s_ = 0
+                    speed = 0
+                lat_previo_ = data.iloc[i]['Lat']
+                long_previo_ = data.iloc[i]['Long']
+                origin = [data.iloc[i]['Lat'], data.iloc[i]['Long']]
+                destino =[data.iloc[i-2]['Lat'], data.iloc[i-2]['Long']]
+                speed_text = "<i>Speed: " + str(speed) + " mts/seg</i>"
+                #folium.PolyLine([origin,destino], color=color(speed), weight=speed*3, opacity=1, dash_array="5, 10", tooltip=speed_text).add_to(view_path)
+                folium.PolyLine([origin,destino], color=color(speed), weight=speed*speed*3, opacity=.7, tooltip=speed_text).add_to(view_path)
+            elif(i > mid and up == 1):
+                if (lat_previo_ != 0):
+                    origin = (lat_previo_, long_previo_)
+                    dist = (data.iloc[i]['Lat'], data.iloc[i]['Long'])
+                    s_ = s_ + float("{:.1f}".format(geodesic(origin, dist).meters))
+                    s_ = float("{:.1f}".format(s_))
+                    speed = float("{:.1f}".format(geodesic(origin, dist).meters/6))
+                    #list_speed.append(speed)
+                else:
+                    s_ = 0
+                    speed = 0
+                lat_previo_ = data.iloc[i]['Lat']
+                long_previo_ = data.iloc[i]['Long']
+                origin = [data.iloc[i]['Lat'], data.iloc[i]['Long']]
+                destino =[data.iloc[i-2]['Lat'], data.iloc[i-2]['Long']]
+                speed_text = "<i>Speed: " + str(speed) + " mts/seg</i>"
+                #folium.PolyLine([origin,destino], color=color(speed), weight=speed*3, opacity=1, dash_array="5, 10", tooltip=speed_text).add_to(view_path)
+                folium.PolyLine([origin,destino], color=color(speed), weight=speed*speed*3, opacity=.7, tooltip=speed_text).add_to(view_path)
             
+    st.write("### Algunas estadisticas:")        
     st.write("Total de distancia  recorrida:  __" + str(s) + " mts__")
     st.write("Total de tiempo usado en el recorrido:  __" + str(tim) + "__")
     speed_average = float("{:.2f}".format(sum(list_speed)/len(list_speed)))
@@ -343,8 +428,12 @@ def show_maps(view, samples):
     st.markdown("Espero hacer más análisis con los datos recopilados y con los que pueda generar.")
      
     correr_group.add_to(map_sby)
-    
+    view_path.add_to(map_sby)
     folium.LayerControl(collapsed=True).add_to(map_sby)
     folium_static(map_sby)
+    
+
+
+
 
 show_maps(view_data, values)
