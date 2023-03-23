@@ -14,7 +14,7 @@ import numpy as np
 import base64
 from datetime import datetime
 import time
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 #import vincent
 #import json
