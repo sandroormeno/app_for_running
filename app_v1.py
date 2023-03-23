@@ -14,6 +14,7 @@ import numpy as np
 import base64
 from datetime import datetime
 import time
+import matplotlib.pyplot as plt
 
 #import vincent
 #import json
@@ -425,6 +426,71 @@ def show_maps(view, samples):
     st.write("Total de tiempo usado en el recorrido:  __" + str(tim) + "__")
     speed_average = float("{:.2f}".format(sum(list_speed)/len(list_speed)))
     st.write("Velocidad promedio del recorrido:  __" + str(speed_average) + " mts/seg__")
+    df_speed = pd.DataFrame(list_speed, columns=['speed'])
+    #import io
+    #st.table(df_speed)
+    #st.write(df_speed.describe())
+    #fig, ax = plt.subplots(figsize =(10, 7))
+    #plt.hist(x)
+    #ax.hist(list_speed, bins = [1.0, 1.5, 2.0, 2.5, 2.8])
+    #contador = df_speed.value_counts(dropna=False)
+    contador = df_speed.value_counts(dropna=False)
+    #st.write(contador)
+    #st.write(dict(contador))# df_index_set.dtypes
+    lolo = np.c_[np.unique(df_speed.speed, return_counts=1)]
+    su1 = df_speed['speed'].value_counts().index.tolist()
+    df_ = df_speed.value_counts().rename_axis('speed').to_frame('counts')
+    #st.write(df_)
+    
+    #print(df_["counts"].tolist())
+    #print(list(df_.index.values))
+    
+    #fig, x = plt.subplots()
+
+    #x.hist(df_speed['speed'], color='orange', bins=5)
+    #plotting the figure
+
+    #st.pyplot(fig)
+    
+    import plotly.express as px
+    
+    l = list(df_.index.values)
+    list_speed=[]
+    for i in l:
+        list_speed.append(i[0])
+        
+    data_h = pd.DataFrame(
+    {
+
+        "Speed" : list_speed , 
+        "counts": np.array(df_["counts"].tolist()),
+    }
+    )
+    
+    data_h["Speed"] = data_h["Speed"].astype(str) + " m/s"
+
+    #st.table(grouper)
+    
+    fig = px.histogram(
+        data_h,
+        x="Speed",
+        y="counts",
+        color="Speed",
+        color_discrete_sequence=[
+            px.colors.sample_colorscale("rdylgn", v)[0]
+            for v in (
+                data_h["counts"] / data_h["counts"].max()
+            ).tolist()
+        ],
+        hover_data=dict(Speed=False),
+    )
+    fig.update_layout(title_text='Histograma de velocidades', title_x=0.4)
+    fig.update_layout(showlegend=False)
+    fig.update_yaxes(title="  ")
+
+    st.plotly_chart(fig, use_container_width=True)
+    
+    
     st.markdown("Espero hacer más análisis con los datos recopilados y con los que pueda generar.")
      
     correr_group.add_to(map_sby)
