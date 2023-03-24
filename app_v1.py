@@ -427,6 +427,7 @@ def show_maps(view, samples):
     speed_average = float("{:.2f}".format(sum(list_speed)/len(list_speed)))
     st.write("Velocidad promedio del recorrido:  __" + str(speed_average) + " mts/seg__")
     df_speed = pd.DataFrame(list_speed, columns=['speed'])
+
     #import io
     #st.table(df_speed)
     #st.write(df_speed.describe())
@@ -441,7 +442,10 @@ def show_maps(view, samples):
     su1 = df_speed['speed'].value_counts().index.tolist()
     df_ = df_speed.value_counts().rename_axis('speed').to_frame('counts')
     #st.write(df_)
+    #st.table(df_)
     
+    #df_s = df_.sort_index()
+    #st.table(df_s)
     #print(df_["counts"].tolist())
     #print(list(df_.index.values))
     
@@ -467,19 +471,22 @@ def show_maps(view, samples):
     }
     )
     
-    data_h["Speed"] = data_h["Speed"].astype(str) + " m/s"
-
-    #st.table(grouper)
+    newdf = data_h.sort_values(by='Speed') 
+    #st.table(newdf)
+    
+    newdf["Speed"] = newdf["Speed"].astype(str) + " m/s"
+    
+    #st.table(newdf)
     
     fig = px.histogram(
-        data_h,
+        newdf,
         x="Speed",
         y="counts",
         color="Speed",
         color_discrete_sequence=[
             px.colors.sample_colorscale("rdylgn", v)[0]
             for v in (
-                data_h["counts"] / data_h["counts"].max()
+                newdf["counts"] / newdf["counts"].max()
             ).tolist()
         ],
         hover_data=dict(Speed=False),
