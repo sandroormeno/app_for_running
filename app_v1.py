@@ -14,6 +14,7 @@ import numpy as np
 import base64
 from datetime import datetime
 import time
+import random
 #import matplotlib.pyplot as plt
 
 #import vincent
@@ -226,7 +227,8 @@ Además, también se representa en el espesor del trazo.
 
 st.markdown(text)
 
-indice = st.slider('Imagen a ver: ', 11, 774, 567)
+#r = random.randrange(11, 774)
+indice = st.slider('Imagen a ver: ', 11, 774, 112)
 
 
 #m = folium.Map(location=[-12.1070348,-76.9468047], zoom_start=10)
@@ -478,25 +480,41 @@ def show_maps(view, samples):
     
     #st.table(newdf)
     
+    #fig = px.histogram(
+    #    newdf,
+    #    x="Speed",
+    #    y="counts",
+    #    color="Speed",
+    #    color_discrete_sequence=[
+    #        px.colors.sample_colorscale("rdylgn", v)[0]
+    #        for v in (
+    #            newdf["counts"] / newdf["counts"].max()
+    #        ).tolist()
+    #    ],
+    #    hover_data=dict(Speed=False),
+    #)
+    my_colors = ['#ff4917', '#EF553B', '#faa328', '#fad028', '#fae528', '#fcef35', '#faf328', '#effa28', '#dbfa28', '#cdfa28', '#adfa28', '#85f714', '#10e63b', '#09d932', '#08cf2f', '#07b329']
+    my_Speed = ['1.1 m/s', '1.2 m/s','1.3 m/s','1.4 m/s','1.5 m/s','1.6 m/s','1.7 m/s','1.8 m/s','1.9 m/s', '2.0 m/s', '2.1 m/s', '2.2 m/s', '2.3 m/s', '2.4 m/s', '2.5 m/s', '2.6 m/s']
+    my_color_dict = dict(zip(my_Speed,my_colors ))
     fig = px.histogram(
         newdf,
         x="Speed",
         y="counts",
         color="Speed",
-        color_discrete_sequence=[
-            px.colors.sample_colorscale("rdylgn", v)[0]
-            for v in (
-                newdf["counts"] / newdf["counts"].max()
-            ).tolist()
-        ],
+        #color_discrete_map = {'1.1 m/s':'#ff4917','1.3 m/s':'#EF553B','2 m/s':'yellow','2.8 m/s':'green'},
+        color_discrete_map = my_color_dict,
+        #color_discrete_sequence=['indianred']
+        #color_discrete_sequence=px.colors.qualitative.G10 
+        #color_discrete_sequence=['#ff4917', '#EF553B', '#faa328', '#fad028', '#fae528', '#fad728', '#faec28', '#effa28', '#dbfa28', '#cdfa28', '#adfa28', '#85f714', '#12fc31'],        
         hover_data=dict(Speed=False),
     )
+    
+    
     fig.update_layout(title_text='Histograma de velocidades', title_x=0.4)
     fig.update_layout(showlegend=False)
     fig.update_yaxes(title="  ")
 
     st.plotly_chart(fig, use_container_width=True)
-    
     
     st.markdown("Espero hacer más análisis con los datos recopilados y con los que pueda generar.")
      
