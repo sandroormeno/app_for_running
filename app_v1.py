@@ -1,9 +1,5 @@
-import pandas as pd # library for data analsysis
-#import json # library to handle JSON files
-#from geopy.geocoders import Nominatim # convert an address into latitude and longitude values
-#import requests # library to handle requests
-#import numpy as np
-import folium # map rendering library
+import pandas as pd 
+import folium 
 import streamlit as st
 from folium.plugins import Draw
 from streamlit_folium import folium_static
@@ -15,7 +11,7 @@ import base64
 from datetime import datetime
 import time
 import random
-#import matplotlib.pyplot as plt
+
 
 #import vincent
 #import json
@@ -70,30 +66,6 @@ df = pd.read_csv('https://raw.githubusercontent.com/sandroormeno/app_for_running
 #dicts_view = {"View down": [1,0],
 #              "View Up": [0,1]}
 mid_= 380
-#range_img = st.sidebar.slider(
-#    'Select a range to view images',
-#    0, len(df), (12, 776))
-
-#df = pd.read_csv('images/data_image.csv')
-#st.dataframe(df, 200, 100)
-#st.text(str(df.iloc[0]['file']))
-#image = df.iloc[2]['file']
-#image = 'https://raw.githubusercontent.com/sandroormeno/app_for_running/main/images/1.jpg'
-#st.image(image, caption='Sunrise by the mountains')
-#encoded = base64.b64encode(open('images/1.jpg', 'rb').read()).decode()
-#html = '<img src="data:image/jpeg;base64,{}" width="400" height="400">'.format
-
-#html = """
-#    <h1> This is a big popup</h1><br>
-#   With a few lines of code...
-#    <p>
-#    <code>
-#        from numpy import *<br>
-#        exp(-2*pi)
-#    </code>
-#    </p>
-#    """
-#
 
 #st.text('https://raw.githubusercontent.com/sandroormeno/app_for_running/main'+str(df.iloc[0]['path']))
 
@@ -101,6 +73,7 @@ correr_group = folium.FeatureGroup(name="View path + images", show=True)
 feature_group = folium.FeatureGroup(name="View images", show=False)
 img_group = folium.FeatureGroup(name="View images better", show=False)
 view_path = folium.FeatureGroup(name="View only path", show=False)
+view_altitud = folium.FeatureGroup(name="View Altitud", show=False)
 
 #down_ = dicts_view[view_images][0]
 #up_ = dicts_view[view_images][1]
@@ -113,82 +86,10 @@ for i in range(len(df)):
    lon = df.iloc[i]['Long']
    pos.append((lat,lon))
    list_of_images.append(image)
-#for i in range(len(df)):
-#st.write('Cantidad de images:', len(list_of_images)) 
-#st.write('Images:', list_of_images) 
-#img_df = pd.DataFrame(list_of_images, columns=["Url"])
-#st.dataframe(img_df)
+
 
 # this is the better View
 df_img = pd.read_csv('https://raw.githubusercontent.com/sandroormeno/app_for_running/main/OpenCamera/data_gps_image.csv')
-___ = '''
-for i in range(len(df_img)):
-    
-    if (i <= 82 and down_ == 1):
-        image =f"https://raw.githubusercontent.com/sandroormeno/app_for_running/main{df_img.iloc[i]['path']}"
-        #image =list_of_images[ini_imagen]
-        html = f"<img src={str(image)} width='400' height='400'><br><i> &copy 2023 Sandro Ormeño</i>"
-        iframe = branca.element.IFrame(html=html, width=400+20, height=400+60)
-        popup = folium.Popup(iframe, max_width=2650)
-        folium.Marker([df_img.iloc[i]['Lat'], df_img.iloc[i]['Long']], popup=popup).add_to(img_group)
-    elif(i > 82 and up_ == 1):
-        image =f"https://raw.githubusercontent.com/sandroormeno/app_for_running/main{df_img.iloc[i]['path']}"
-        #image =list_of_images[ini_imagen]
-        html = f"<img src={str(image)} width='400' height='400'><br><i> Time: &copy 2023 Sandro Ormeño</i>"
-        iframe = branca.element.IFrame(html=html, width=400+20, height=400+60)
-        popup = folium.Popup(iframe, max_width=2650)
-        folium.Marker([df_img.iloc[i]['Lat'], df_img.iloc[i]['Long']], popup=popup).add_to(img_group)
-
-#img_group.add_to(map_sby)
-# end better View
-'''
-
-__ = '''
-
-num = 0
-
-for i in range(range_img[0],range_img[1]):
-    #index_ = "<i>Sample: " + str(i) + "</i>"
-    #if (i % 3 == 0):
-    num = num+1
-    if (i <= mid_ and down_ == 1):
-        
-    
-        #image = df.iloc[i]['path'] # f"{to_lowercase(name)} is funny."
-        image =f"https://raw.githubusercontent.com/sandroormeno/app_for_running/main{df.iloc[i]['path']}"
-        #html = f"<img src={str(image)} width='400' height='400'><br><i> Lat: {str(df.iloc[i]['Lat'])}<br>Long: {str(df.iloc[i]['Long'])}</i>"
-        date_now = str(df.iloc[i]['date_time'])
-        time_now = date_now.split(" ")[-1]
-        time_object = datetime.strptime(time_now, '%H:%M:%S').time()
-        #time_object = time_object + pd.DateOffset(hours = 5)
-        #final_time = time_object + pd.DateOffset(hours=5)
-
-        html = f"<img src={str(image)} width='400' height='400'><br><i> Time: {time_object.hour} : {time_object.minute} : {time_object.second} </i>"
-        #html = '<img src="data:image/jpeg;base64,{}" width="400" height="400">'.format
-        #iframe = folium.IFrame(html(encoded), width=400+20, height=400+20)
-        iframe = branca.element.IFrame(html=html, width=400+20, height=400+60)
-        popup = folium.Popup(iframe, max_width=2650)
-        
-        folium.Marker([df.iloc[i]['Lat'], df.iloc[i]['Long']], popup=popup).add_to(feature_group)
-    elif(i > mid_ and up_ == 1):
-        image =f"https://raw.githubusercontent.com/sandroormeno/app_for_running/main{df.iloc[i]['path']}"
-        #html = f"<img src={str(image)} width='400' height='400'><br><i> Lat: {str(df.iloc[i]['Lat'])}<br>Long: {str(df.iloc[i]['Long'])}</i>"
-        date_now = str(df.iloc[i]['date_time'])
-        time_now = date_now.split(" ")[-1]
-        html = f"<img src={str(image)} width='400' height='400'><br><i> Date: {time_now}</i>"
-        #html = '<img src="data:image/jpeg;base64,{}" width="400" height="400">'.format
-        #iframe = folium.IFrame(html(encoded), width=400+20, height=400+20)
-        iframe = branca.element.IFrame(html=html, width=400+20, height=400+60)
-        popup = folium.Popup(iframe, max_width=2650)
-        folium.Marker([df.iloc[i]['Lat'], df.iloc[i]['Long']], popup=popup).add_to(feature_group)
-        
-#st.write('Samples per images:',num)        
-   
-#feature_group.add_to(map_sby)
-#folium.LayerControl().add_to(map_sby)
-#folium.LayerControl().add_to(map_sby)
-'''
-
 
 
 
@@ -209,14 +110,15 @@ Además, indico la velocidad en cada tramo del recorrido, el cual se puede visua
 #st.markdown('Streamlit is **_really_ cool**.')
 st.markdown(text)
 
-st.markdown("![Alt Text](https://raw.githubusercontent.com/sandroormeno/app_for_running/main/images/path.PNG)")
+st.markdown("![Alt Text](https://raw.githubusercontent.com/sandroormeno/app_for_running/main/images/view_path.gif)")
+
 
 text = "Para representar la velocidad estoy usando un mapeo de color como se muestra a continuación:"
 st.markdown(text)
 color = cm.LinearColormap(['red','yellow', 'green'],
                         vmin=1, vmax=2.8,
-                        index=[0, 2.0, 2.8])                     
-st.write(color)
+                        index=[0, 2.0, 2.8])  
+st.write(color) 
 
 text = '''
 Esto quiere decir que estoy usando :red[rojo] para bajas velocidades (1 mts/seg) y :green[verde] para altas velocidades (2.8mts/seg). 
@@ -224,36 +126,64 @@ Además, también se representa en el espesor del trazo.
 
 '''
 
+st.markdown(text)                        
 
+text = "También se representa la altura del terreno, el cual se puede visualizar en el apartado `View Altitud`. En combinación con `View only path`,  se puede tener tener una intuición de la dificultad del recorrido."
 st.markdown(text)
+st.markdown("![Alt Text](https://raw.githubusercontent.com/sandroormeno/app_for_running/main/images/view_altitude.gif)")
+                       
+colormap_h = cm.LinearColormap(['#525252','#bababa', '#f0f0f0'],
+                        vmin=200.0, vmax=400.0,
+                        index=[220.0, 300.0, 400.0])
+st.write(colormap_h) 
 
-#r = random.randrange(11, 774)
-indice = st.slider('Imagen a ver: ', 11, 774, 112)
+text = '''
+<style>
+gris { color: #a8a8a8 }
+grisoscuro { color: #696969 }
+</style>
+Estoy usando una escala de grices para mostrar la altura que tiene un rango de entre 200 a 400 metros sobre el nivel del mar. 
+Esto quiere decir que estoy usando <gris> __gris__ </gris>  para altas alturas  (360 metros sobre el nivel del mar) y <grisoscuro>__un gris oscuro__</grisoscuro> para altas bajas alturas (240 mts).
+'''
+st.markdown(text,unsafe_allow_html=True)
 
+
+text = '''
+<style>
+gris { color: #a8a8a8 }
+grisoscuro { color: #696969 }
+</style>
+Si desea ver imágenes del recorrio, he incluido alguas fotografías a intervalos y con posicionamiento. 
+Use el `slider` para seleccionar las imágenes o puede hacer click en las marcas con el icono del personaje corriendo en el último mapa, más abajo.
+'''
+st.markdown(text,unsafe_allow_html=True)
+
+from streamlit_folium import st_folium
 
 #m = folium.Map(location=[-12.1070348,-76.9468047], zoom_start=10)
 
 #m.fit_bounds([[-12.085559732437236, -76.95951832322937], [-12.116557310906174, -76.93135291029945]])
 #Draw(export=True).add_to(m)
 # tutorial
-from streamlit_folium import st_folium
+def show_map_picture(picture):
+    indice = st.slider(' ', 11, 774, picture)
+    m = folium.Map(pos[indice], zoom_start=16)
+    index = "<i>Indice: " + str(indice) + "</i>"
+    folium.Marker(pos[indice],tooltip=index ).add_to(m)
+    #Draw(export=True).add_to(m)
 
-m = folium.Map(pos[indice], zoom_start=16)
-index = "<i>Indice: " + str(indice) + "</i>"
-folium.Marker(pos[indice],tooltip=index ).add_to(m)
-#Draw(export=True).add_to(m)
+    c1, c2 = st.columns(2)
+    with c1:
+        #output = st_folium(m, width=700, height=500)
+        st_folium(m, width=500, height=400)
 
-c1, c2 = st.columns(2)
-with c1:
-    #output = st_folium(m, width=700, height=500)
-    st_folium(m, width=500, height=400)
+    with c2:
+        #st.write(output)
+        st.markdown(f"![Alt Text]({str(list_of_images[indice])})")
 
-with c2:
-    #st.write(output)
-    st.markdown(f"![Alt Text]({str(list_of_images[indice])})")
-    
-    
 
+Picture = 112
+show_map_picture(Picture)
     
 
 def show_maps(view, samples):
@@ -308,19 +238,7 @@ def show_maps(view, samples):
                 html = f"<img src={str(image)} width='400' height='400'><br><i>Tiempo : {str(tim)}<br>Distacia: {str(s)} mts<br>Velocidad: {str(speed)} mts/seg<br>&copy 2023 Sandro Ormeño</i>"
                 iframe = branca.element.IFrame(html=html, width=400+20, height=400+90)
                 popup = folium.Popup(iframe, max_width=2650)
-                #if(i == samples[0]):
-                #    iframe = folium.IFrame("<img src='https://raw.githubusercontent.com/sandroormeno/EnglishWeb/main/static/images/ini.jpg'> <i><br>Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Velocidad: "+ str(speed)+" mts/seg</i>")
-                #    iframe_ = branca.element.IFrame(html=iframe, width=340, height=210)
-                #elif(i == mid):
-                #    iframe = folium.IFrame("<img src='https://raw.githubusercontent.com/sandroormeno/EnglishWeb/main/static/images/fin.jpg'> <i><br>Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Velocidad: "+ str(speed)+" mts/seg</i>")
-                #    iframe_ = branca.element.IFrame(html=iframe, width=340, height=210)
-                #else:
-                #    iframe = folium.IFrame("Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Velocidad: "+ str(speed)+" mts/seg<br>Altitud: "+ str(data.iloc[i]['Altitude'])  +" mts</i>")
-                #    iframe_ = branca.element.IFrame(html=iframe, width=200, height=130)
-                #popup = folium.Popup(iframe, min_width=180, max_width=250, height=500)
-                
-                #popup = folium.Popup(iframe_,  max_width=210)
-                
+               
                 index = "<i>Sample: " + str(i) + "</i>"
                 
 
@@ -334,6 +252,9 @@ def show_maps(view, samples):
                 origin = [data.iloc[i]['Lat'], data.iloc[i]['Long']]
                 destino =[data.iloc[i-10]['Lat'], data.iloc[i-10]['Long']]
                 speed_text = "<i>Speed: " + str(speed) + " mts/seg</i>"
+                #p = data.iloc[i]['Altitude']
+                #text_ = "<i>Altitud: " + str(p) + "</i>"
+                #folium.Circle(location=(data.iloc[i]['Lat'],data.iloc[i]['Long']),popup=text_,radius=20, fill_opacity = 1.0,stroke=False, color=colormap_h(p), fill=True, fill_color= colormap_h(p)).add_to(view_path)
                 #folium.PolyLine([origin,destino], color=color(speed), weight=speed*3, opacity=1, dash_array="5, 10", tooltip=speed_text).add_to(view_path)
             elif(i > mid and up == 1):
                 if (lat_previo != 0):
@@ -357,17 +278,7 @@ def show_maps(view, samples):
                 lat_previo = data.iloc[i]['Lat']
                 long_previo = data.iloc[i]['Long']
                 # https://raw.githubusercontent.com/sandroormeno/EnglishWeb/main/static/images/ini.jpg
-                #iframe = folium.IFrame("<img src='https://raw.githubusercontent.com/sandroormeno/EnglishWeb/main/static/images/ini.jpg' width='100' height='100'> <i><br>Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Speed: "+ str(speed)+" mts/seg</i>")
-                #popup = folium.Popup(iframe, min_width=180, max_width=250)
-                #if(i == mid):
-                #    iframe = folium.IFrame("<img src='https://raw.githubusercontent.com/sandroormeno/EnglishWeb/main/static/images/fin.jpg'> <i><br>Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Velocidad: "+ str(speed)+" mts/seg<br>Altitud: "+ str(data.iloc[i]['Altitude'])  +" mts</i>")
-                #    iframe = folium.IFrame("Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Speed: "+ str(speed)+" mts/seg mts<br>Altitude: "+ str(data.iloc[i]['Altitude'])  +" mts</i>")
-                #    iframe_ = branca.element.IFrame(html=iframe, width=340, height=210)
-                #else:
-                    #iframe = folium.IFrame("Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Speed: "+ str(speed)+" mts/seg</i>")
-                #    iframe = folium.IFrame("Hora: " + str(data.iloc[i]['Tiempo']) + " <br>Tiempo : " + str(tim) + " <br>Distacia: "+ str(s) + " mts<br>Velocidad: "+ str(speed)+" mts/seg<br>Altitud: "+ str(data.iloc[i]['Altitude'])  +" mts</i>")
-                #    iframe_ = branca.element.IFrame(html=iframe, width=200, height=130)   
-                #popup = folium.Popup(iframe_, lolo = df_img.iloc[-1]['path']
+
                 image=f"https://raw.githubusercontent.com/sandroormeno/app_for_running/main{df_img.iloc[num]['path']}"
                 html = f"<img src={str(image)} width='400' height='400'><br><i>Tiempo : {str(tim)}<br>Distacia: {str(s)} mts<br>Velocidad: {str(speed)} mts/seg<br>&copy 2023 Sandro Ormeño</i>" #<h6>Heading level 6</h6>
                 iframe = branca.element.IFrame(html=html, width=400+20, height=400+90)
@@ -382,6 +293,9 @@ def show_maps(view, samples):
                 origin = [data.iloc[i]['Lat'], data.iloc[i]['Long']]
                 destino =[data.iloc[i-10]['Lat'], data.iloc[i-10]['Long']]
                 speed_text = "<i>Speed: " + str(speed) + " mts/seg</i>"
+                #p = data.iloc[i]['Altitude']
+                #text_ = "<i>Altitud: " + str(p) + "</i>"
+                #folium.Circle(location=(data.iloc[i]['Lat'],data.iloc[i]['Long']),popup=text_,radius=20, fill_opacity = 1.0, stroke=False, color=colormap_h(p), fill=True, fill_color= colormap_h(p)).add_to(view_path)
                 #folium.PolyLine([origin,destino], color=color(speed), weight=speed*3, opacity=1, dash_array="5, 10", tooltip=speed_text).add_to(view_path)
                 #folium.PolyLine([origin,destino], color=color(speed), weight=speed*3, opacity=1, tooltip=speed_text).add_to(view_path)
             num = num +1 
@@ -404,6 +318,10 @@ def show_maps(view, samples):
                 speed_text = "<i>Speed: " + str(speed) + " mts/seg</i>"
                 #folium.PolyLine([origin,destino], color=color(speed), weight=speed*3, opacity=1, dash_array="5, 10", tooltip=speed_text).add_to(view_path)
                 folium.PolyLine([origin,destino], color=color(speed), weight=speed*speed*3, opacity=.7, tooltip=speed_text).add_to(view_path)
+                p = data.iloc[i]['Altitude']
+                text_a = "<i>Altitud: " + str(p) + "</i>"
+                folium.Circle(location=(data.iloc[i]['Lat'],data.iloc[i]['Long']),radius=20, fill_opacity = 1.0, stroke=False, color=colormap_h(p), fill=True, fill_color= colormap_h(p), tooltip=text_a).add_to(view_altitud)
+                #folium.Circle(location=(data.iloc[i]['Lat'],data.iloc[i]['Long']),radius=10, fill=True, color= colormap_h(p)).add_to(view_path)
             elif(i > mid and up == 1):
                 if (lat_previo_ != 0):
                     origin = (lat_previo_, long_previo_)
@@ -422,6 +340,10 @@ def show_maps(view, samples):
                 speed_text = "<i>Speed: " + str(speed) + " mts/seg</i>"
                 #folium.PolyLine([origin,destino], color=color(speed), weight=speed*3, opacity=1, dash_array="5, 10", tooltip=speed_text).add_to(view_path)
                 folium.PolyLine([origin,destino], color=color(speed), weight=speed*speed*3, opacity=.7, tooltip=speed_text).add_to(view_path)
+                p = data.iloc[i]['Altitude']
+                text_a = "<i>Altitud: " + str(p) + "</i>"
+                folium.Circle(location=(data.iloc[i]['Lat'],data.iloc[i]['Long']),radius=20, fill_opacity = 1.0, stroke=False, color=colormap_h(p), fill=True, fill_color= colormap_h(p), tooltip=text_a).add_to(view_altitud)
+                #folium.Circle(location=(data.iloc[i]['Lat'],data.iloc[i]['Long']),radius=10, fill=True, color= colormap_h(p)).add_to(view_path)
             
     st.write("### Algunas estadisticas:")        
     st.write("Total de distancia  recorrida:  __" + str(s) + " mts__")
@@ -429,14 +351,9 @@ def show_maps(view, samples):
     speed_average = float("{:.2f}".format(sum(list_speed)/len(list_speed)))
     st.write("Velocidad promedio del recorrido:  __" + str(speed_average) + " mts/seg__")
     df_speed = pd.DataFrame(list_speed, columns=['speed'])
+    
+    st.write("Además, podemos representar la distribución de las frecuencias de velocidades:")
 
-    #import io
-    #st.table(df_speed)
-    #st.write(df_speed.describe())
-    #fig, ax = plt.subplots(figsize =(10, 7))
-    #plt.hist(x)
-    #ax.hist(list_speed, bins = [1.0, 1.5, 2.0, 2.5, 2.8])
-    #contador = df_speed.value_counts(dropna=False)
     contador = df_speed.value_counts(dropna=False)
     #st.write(contador)
     #st.write(dict(contador))# df_index_set.dtypes
@@ -445,19 +362,7 @@ def show_maps(view, samples):
     df_ = df_speed.value_counts().rename_axis('speed').to_frame('counts')
     #st.write(df_)
     #st.table(df_)
-    
-    #df_s = df_.sort_index()
-    #st.table(df_s)
-    #print(df_["counts"].tolist())
-    #print(list(df_.index.values))
-    
-    #fig, x = plt.subplots()
-
-    #x.hist(df_speed['speed'], color='orange', bins=5)
-    #plotting the figure
-
-    #st.pyplot(fig)
-    
+       
     import plotly.express as px
     
     l = list(df_.index.values)
@@ -480,19 +385,6 @@ def show_maps(view, samples):
     
     #st.table(newdf)
     
-    #fig = px.histogram(
-    #    newdf,
-    #    x="Speed",
-    #    y="counts",
-    #    color="Speed",
-    #    color_discrete_sequence=[
-    #        px.colors.sample_colorscale("rdylgn", v)[0]
-    #        for v in (
-    #            newdf["counts"] / newdf["counts"].max()
-    #        ).tolist()
-    #    ],
-    #    hover_data=dict(Speed=False),
-    #)
     my_colors = ['#ff4917', '#EF553B', '#faa328', '#fad028', '#fae528', '#fcef35', '#faf328', '#effa28', '#dbfa28', '#cdfa28', '#adfa28', '#85f714', '#10e63b', '#09d932', '#08cf2f', '#07b329']
     my_Speed = ['1.1 m/s', '1.2 m/s','1.3 m/s','1.4 m/s','1.5 m/s','1.6 m/s','1.7 m/s','1.8 m/s','1.9 m/s', '2.0 m/s', '2.1 m/s', '2.2 m/s', '2.3 m/s', '2.4 m/s', '2.5 m/s', '2.6 m/s']
     my_color_dict = dict(zip(my_Speed,my_colors ))
@@ -519,12 +411,9 @@ def show_maps(view, samples):
     st.markdown("Espero hacer más análisis con los datos recopilados y con los que pueda generar.")
      
     correr_group.add_to(map_sby)
+    view_altitud.add_to(map_sby)
     view_path.add_to(map_sby)
     folium.LayerControl(collapsed=True).add_to(map_sby)
     folium_static(map_sby)
     
-
-
-
-
 show_maps(view_data, values)
