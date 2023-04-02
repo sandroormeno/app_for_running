@@ -1,4 +1,4 @@
-# app_for_running
+# App for running
 ![imagen](https://raw.githubusercontent.com/sandroormeno/app_for_running/main/images/run.gif)
 
 App with streamlit and folium.
